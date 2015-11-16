@@ -43,7 +43,7 @@ public class MainActivity extends Activity {
 		userName = (EditText) findViewById(R.id.accountEt);
 		passWord = (EditText) findViewById(R.id.pwdEt);
 		userName.setText("Ð¦Ì¸×Ç¾Æ");
-		passWord.setText("ysjwsswsb1");
+		passWord.setText("");
 		Login = (Button) findViewById(R.id.subBtn);
 		Login.setOnClickListener(new View.OnClickListener() {
 		    public void onClick(View v) {

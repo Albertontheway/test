@@ -38,7 +38,6 @@ public class MyTool {
 
 	public static void main(String[] args) throws Exception {
 
-	 
 	}
 
 	public static List<TieBaObj> resolveHtml_tiezi_list(Document doc)
@@ -308,9 +307,9 @@ public class MyTool {
 						}
 					}
 				}
-//				System.out.println("时间 ：" + jDate);
+				// System.out.println("时间 ：" + jDate);
 				son.setDate(jDate);
-//				System.out.println("作者： " + authorName);
+				// System.out.println("作者： " + authorName);
 				son.setAuthor(authorName);
 
 				list.add(son);
@@ -322,7 +321,7 @@ public class MyTool {
 	public ArrayList<SonTieZi> NTieView1(Document doc) throws Exception {
 		String PID = null;
 		System.out.println(doc.title());
-		// System.out.println("NTieView1" + doc.getAllElements().toString());
+		 System.out.println("NTieView1" + doc.getAllElements().toString());
 
 		Elements div = doc.getElementsByTag("div");
 		Elements h1 = doc.getElementsByTag("h3");
@@ -331,14 +330,14 @@ public class MyTool {
 		for (Element t : h1) {
 			if (t.attr("class").equals(
 					"core_title_txt pull-left text-overflow  ")) {
-//				System.out.println("标题：" + t.ownText());
+				// System.out.println("标题：" + t.ownText());
 				title = t.ownText();
 			}
 		}
-		 
+
 		System.out.println("NTieView3");
 		for (Element t : div) {
-			System.out.println("for (Element t : et) {");
+//			System.out.println("for (Element t : et) {");
 			SonTieZi son = new SonTieZi();
 			if (t.attr("class").equals(
 					"l_post l_post_bright j_l_post clearfix  ")) {
@@ -348,7 +347,7 @@ public class MyTool {
 
 				for (Element a : one_a) {
 
-					System.out.println("for (Element a : one_a) {");
+//					System.out.println("for (Element a : one_a) {");
 					if (a.attr("class").equals("p_author_name j_user_card")) {
 
 						son.setAuthor(a.ownText());
@@ -406,17 +405,27 @@ public class MyTool {
 						String ziContent = null;
 						Elements louzhonglou_a = d.getElementsByTag("a");
 						Elements louzhonglou_span = d.getElementsByTag("span");
-						
-						 String data_field = d.attr("data-field");
-						 // System.out.println(data_field);
-						  
+
+						String data_field = d.attr("data-field");
+						// System.out.println(data_field);
+
 						JSONObject json = new JSONObject(data_field);
 
-						String jpid =  json.getString("pid");
-						String jtotal_num =  json.getString("total_num");
-						System.out.println("jpid = "+jpid+"jtotal_num ="+jtotal_num);
-						 
-						
+						String jpid = json.getString("pid");
+						String jtotal_num = json.getString("total_num");
+						System.out.println("jpid = " + jpid + "jtotal_num ="
+								+ jtotal_num);
+
+//						Document doc1 = Jsoup
+//								.connect(
+//										"http://tieba.baidu.com/p/1724846944/p/21881773634")
+//								.userAgent("I ’ m jsoup")
+//								// .userAgent(
+//								// "Mozilla/9.0 (compatible; MSIE 10.0; Windows NT 8.1; .NET CLR 2.0.50727)")
+//								.get();
+//						System.out.println("NTieView1"
+//								+ doc1.getAllElements().toString());
+
 						for (Element span1 : louzhonglou_span) {
 							if (span1.attr("class").equals("lzl_content_main")) {
 								ziContent = span1.ownText();

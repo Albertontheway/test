@@ -1,16 +1,24 @@
 package com.example.baidutieba;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
 import org.json.JSONException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.xml.sax.InputSource;
 
 import com.cerosoft.tieba.MyTool;
 //import com.cerosoft.tieba.MyTool.DownLoad;
@@ -93,10 +101,10 @@ public class BowserTieBa extends Activity {
 	@SuppressLint("NewApi")
 	@SuppressWarnings("unchecked")
 	protected void onCreate(Bundle savedInstanceState) {
-		
+
 		super.onCreate(savedInstanceState);
-		getWindow().setFlags(WindowManager.LayoutParams. FLAG_FULLSCREEN ,                
-                WindowManager.LayoutParams. FLAG_FULLSCREEN); 
+		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		WindowManager manage = getWindowManager();
 		Display display = manage.getDefaultDisplay();
 		int screenWidth = display.getWidth();
@@ -149,18 +157,48 @@ public class BowserTieBa extends Activity {
 					new Thread() {
 						@Override
 						public void run() {
+							System.out.println("PID£º" + t.getpID());
+							PID = t.getpID();
+
+							// doc = Jsoup.parse(
+							// new URL("http://tieba.baidu.com.cn"
+							// + t.getpID()), 5000);
+							String xmlStr = null;
+							// try {
+							// xmlStr = testGetHtml("http://tieba.baidu.com.cn"
+							// + t.getpID());
+							// System.out.println(xmlStr);
+							//
+							// // StringReader sr = new StringReader(xmlStr);
+							// // InputSource is = new InputSource(sr);
+							// // DocumentBuilderFactory factory =
+							// DocumentBuilderFactory.newInstance();
+							// // DocumentBuilder
+							// builder=factory.newDocumentBuilder();
+							// // Document doc = (Document) builder.parse(is);
+							// } catch (Exception e) {
+							// // TODO Auto-generated catch block
+							// e.printStackTrace();
+							// }
 							try {
-								System.out.println("PID£º" + t.getpID());
-								PID = t.getpID();
 								doc = Jsoup
 										.connect(
-												"http://tieba.baidu.com"
-														+ t.getpID())
-														.userAgent("I ¡¯ m jsoup")
-//										.userAgent(
-//												"Mozilla/9.0 (compatible; MSIE 10.0; Windows NT 8.1; .NET CLR 2.0.50727)")
+												"http://tieba.baidu.com/p/1724846944/p/1724846944?pid=21881717012&amp;see_lz=1#21881717012")
+										.data("query", "Java")
+										.userAgent(
+												"Mozilla/9.0 (compatible; MSIE 10.0; Windows NT 8.1; .NET CLR 2.0.50727)")
 										.get();
+								// doc = Jsoup
+								// .connect("http://tieba.baidu.com/p/1944684425?pid=25904222672")
+								// .data("query", "Java")
+								// // .userAgent("I ¡¯ m jsoup")
+								// .userAgent(
+								// "Mozilla/9.0 (compatible; MSIE 10.0; Windows NT 8.1; .NET CLR 2.0.50727)")
+								// .get();
+
 							} catch (IOException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
 							}
 							handler.sendEmptyMessage(0);
 						}
@@ -176,9 +214,9 @@ public class BowserTieBa extends Activity {
 
 			m_TextView = (TextView) browsertieba_element_layout
 					.findViewById(R.id.textureView3);
-//			String str = t.getAuthor();
-//			 
-//			String newStr = str.substring(str.indexOf(":"),str.length());
+			// String str = t.getAuthor();
+			//
+			// String newStr = str.substring(str.indexOf(":"),str.length());
 			m_TextView.setText(t.getAuthor());
 			// GradientDrawable drawable = new GradientDrawable();
 			// drawable.setShape(GradientDrawable.RECTANGLE); // »­¿ò
@@ -189,8 +227,8 @@ public class BowserTieBa extends Activity {
 
 			m_TextView = (TextView) browsertieba_element_layout
 					.findViewById(R.id.textureView4);
-//			  str = t.getLastReply();
-//			  newStr = str.substring(str.indexOf(":"),str.length());
+			// str = t.getLastReply();
+			// newStr = str.substring(str.indexOf(":"),str.length());
 			m_TextView.setText(t.getLastReply());
 
 			bottom.addView(browsertieba_element_layout);
@@ -496,7 +534,8 @@ public class BowserTieBa extends Activity {
 		public void handleMessage(Message msg) {
 			super.handleMessage(msg);
 			try {
-				lTBO_trun_page = (ArrayList<TieBaObj>) MyTool.resolveHtml_tiezi_list(doc);
+				lTBO_trun_page = (ArrayList<TieBaObj>) MyTool
+						.resolveHtml_tiezi_list(doc);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -880,5 +919,34 @@ public class BowserTieBa extends Activity {
 			}.start();
 		}
 	};
+
+	public static byte[] readStream(InputStream inputStream) throws Exception {
+		byte[] buffer = new byte[1024];
+		int len = -1;
+		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+
+		while ((len = inputStream.read(buffer)) != -1) {
+			byteArrayOutputStream.write(buffer, 0, len);
+		}
+
+		inputStream.close();
+		byteArrayOutputStream.close();
+		return byteArrayOutputStream.toByteArray();
+	}
+
+	public static String testGetHtml(String urlpath) throws Exception {
+		URL url = new URL(urlpath);
+		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+		conn.setConnectTimeout(6 * 1000);
+		conn.setRequestMethod("GET");
+
+		if (conn.getResponseCode() == 200) {
+			InputStream inputStream = conn.getInputStream();
+			byte[] data = readStream(inputStream);
+			String html = new String(data);
+			return html;
+		}
+		return null;
+	}
 
 }
