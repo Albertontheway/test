@@ -114,7 +114,7 @@ public class BowserTieBa extends Activity {
 
 		}
 		if (list.size() == 0)
-			new AlertDialog.Builder(BowserTieBa.this).setTitle("Message")
+			new AlertDialog.Builder(BowserTieBa.this).setTitle("message")
 					.setMessage("empty.").setPositiveButton("OK", null).show();
 		// listUser =(ArrayList<User>) bl.getSerializable("selectTieba");
 
